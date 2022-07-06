@@ -19,9 +19,19 @@ namespace JackLogisticsInc.API.Controllers
         [HttpGet]
         public IActionResult GetWarehousesList()
         {
-            return Ok(this.DbContext.Warehouses
-                .Include(w => w.Locations)
-                .ToList());
+            return Ok(this.DbContext.Warehouses.ToList());
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetWarehouse(int id)
+        {
+            return Ok(this.DbContext.Warehouses.First(w => w.Id == id));
+        }
+
+        [HttpGet("{id}/locations")]
+        public IActionResult GetWarehouseLocations(int id)
+        {
+            return Ok(this.DbContext.Locations.Where(l => l.WarehouseId == id).ToList());
         }
     }
 }
