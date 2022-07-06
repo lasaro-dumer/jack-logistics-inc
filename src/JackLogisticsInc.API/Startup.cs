@@ -43,8 +43,10 @@ namespace JackLogisticsInc.API
                 }
             });
 
-            services.AddControllers().AddNewtonsoftJson(options =>
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services.AddControllers()
+                .AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
+                .AddApplicationPart(typeof(Startup).Assembly);
 
             services.AddSwaggerGen(c =>
             {
@@ -59,8 +61,10 @@ namespace JackLogisticsInc.API
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            dbContext.Database.EnsureCreated();
+            else
+            {
+                dbContext.Database.Migrate();
+            }
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
