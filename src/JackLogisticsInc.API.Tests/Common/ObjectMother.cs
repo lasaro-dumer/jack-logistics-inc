@@ -19,20 +19,19 @@ namespace JackLogisticsInc.API.Tests.Common
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public static int SetupWarehouseWithLocations(WebApplicationFactory<Program> application,
+        public static Warehouse SetupWarehouseWithLocations(WebApplicationFactory<Program> application,
             int buildings = 5, int floors = 2,
-            int corridors = 4, int shelves = 8)
+            int corridors = 4, int shelves = 8,
+            bool addPackages = false)
         {
-            int warehouseId = 0;
+            Warehouse warehouse = new Warehouse()
+            {
+            Name = $"Deposit {RandomString(10)}"
+            };
 
             using(var scope = application.Services.CreateScope())
             {
                 LogisticsDbContext dbContext = scope.ServiceProvider.GetService<LogisticsDbContext>();
-
-                Warehouse warehouse = new Warehouse()
-                {
-                    Name = $"Deposit {RandomString(10)}"
-                };
 
                 for (int b = 0; b < buildings; b++)
                 {
@@ -44,14 +43,18 @@ namespace JackLogisticsInc.API.Tests.Common
                         {
                             for (int s = 0; s < shelves; s++)
                             {
-                                warehouse.Locations.Add(
-                                    new Location()
-                                    {
-                                        Building = buildingName,
-                                            Floor = f.ToString(),
-                                            Corridor = $"C{c}",
-                                            Shelf = s.ToString().PadLeft(4, '0')
-                                    });
+                                Location location = new Location()
+                                {
+                                    Building = buildingName,
+                                    Floor = f.ToString(),
+                                    Corridor = $"C{c}",
+                                    Shelf = s.ToString().PadLeft(4, '0')
+                                };
+
+                                if (addPackages)
+                                    location.Package = NewPackage();
+
+                                warehouse.Locations.Add(location);
                             }
                         }
                     }
@@ -59,10 +62,41 @@ namespace JackLogisticsInc.API.Tests.Common
 
                 dbContext.Warehouses.Add(warehouse);
                 dbContext.SaveChanges();
-                warehouseId = warehouse.Id;
             }
 
-            return warehouseId;
+            return warehouse;
+        }
+
+        public static Package NewPackage()
+        {
+            return new Package()
+            {
+                Description = $"A package with {RandomString(20)}",
+                    Destination = NewAddress()
+            };
+        }
+
+        public static Address NewAddress()
+        {
+            return new Address()
+            {
+                AddressLine = $"Street {RandomString(5)}",
+                    City = "Metropolis",
+                    State = "Central Province",
+                    Country = "Wakanda"
+            };
+        }
+
+        public static void AddPackageToLocation(WebApplicationFactory<Program> application, Location location)
+        {
+            using(var scope = application.Services.CreateScope())
+            {
+                LogisticsDbContext dbContext = scope.ServiceProvider.GetService<LogisticsDbContext>();
+
+                dbContext.Locations.First(l => l.Id == location.Id).Package = NewPackage();
+
+                dbContext.SaveChanges();
+            }
         }
     }
 }

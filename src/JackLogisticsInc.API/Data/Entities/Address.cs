@@ -7,6 +7,6 @@ namespace JackLogisticsInc.API.Data.Entities
         public string City { get; set; }
         public string State { get; set; }
         public string Country { get; set; }
-        public string GeolocationDate { get; set; }
+        public string GeolocationData { get; set; }
     }
 }
