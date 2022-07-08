@@ -12,6 +12,8 @@ namespace JackLogisticsInc.API.Tests.Common
     {
         public WebApplicationFactory<Program> Application { get; private set; }
 
+        protected readonly HttpClient _client;
+
         public ApiControllerTestBase()
         {
             Application = new WebApplicationFactory<Program>()
@@ -31,11 +33,8 @@ namespace JackLogisticsInc.API.Tests.Common
                         });
                     });
                 });
-        }
 
-        public HttpClient GetClient()
-        {
-            return Application.CreateClient();
+            _client = Application.CreateClient();
         }
     }
 }

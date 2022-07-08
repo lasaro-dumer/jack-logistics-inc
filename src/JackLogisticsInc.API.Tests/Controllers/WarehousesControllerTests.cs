@@ -15,13 +15,6 @@ namespace JackLogisticsInc.API.Tests.Controllers
 {
     public class WarehousesControllerTests : ApiControllerTestBase
     {
-        private readonly HttpClient _client;
-
-        public WarehousesControllerTests()
-        {
-            _client = GetClient();
-        }
-
         [Fact]
         public async Task ShouldListWarehouses()
         {
@@ -79,16 +72,26 @@ namespace JackLogisticsInc.API.Tests.Controllers
             Assert.Equal(expectedLocations, parsedResponse.Count);
         }
 
-        [Fact]
-        public async Task ShouldGetAWarehouseLocationsByIdWhenStateDefaultsToPullFreeLocations()
+        [Theory]
+        [InlineData(1, 2, 2, LocationStateFilter.Free)]
+        [InlineData(2, 2, 4, LocationStateFilter.Assigned)]
+        [InlineData(1, 3, 3, LocationStateFilter.Any)]
+        public async Task ShouldGetAWarehouseLocationsByIdAccordingToTheirState(int corridors, int shelves, int expectedLocations, LocationStateFilter locationStateFilter)
         {
             // Arrange
+            bool addPackages = locationStateFilter == LocationStateFilter.Assigned;
+
             Warehouse warehouse = ObjectMother.SetupWarehouseWithLocations(Application,
-                buildings : 1, floors : 1, corridors : 1, shelves : 2,
-                addPackages : false);
+                buildings : 1, floors : 1, corridors : corridors, shelves : shelves,
+                addPackages : addPackages);
+
+            string queryString = locationStateFilter != LocationStateFilter.Free ? $"?locationStateFilter={locationStateFilter}" : "";
+
+            if (locationStateFilter == LocationStateFilter.Any)
+                ObjectMother.AddPackageToLocation(Application, warehouse.Locations.First());
 
             // Act
-            HttpResponseMessage response = await _client.GetAsync($"/api/warehouses/{warehouse.Id}/locations");
+            HttpResponseMessage response = await _client.GetAsync($"/api/warehouses/{warehouse.Id}/locations{queryString}");
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             string responseContent = await ((StreamContent)response.Content).ReadAsStringAsync();
@@ -96,49 +99,7 @@ namespace JackLogisticsInc.API.Tests.Controllers
             List<Location> parsedResponse = JsonConvert.DeserializeObject<List<Location>>(responseContent);
             Assert.NotNull(parsedResponse);
             Assert.NotEmpty(parsedResponse);
-            Assert.Equal(2, parsedResponse.Count);
-        }
-
-        [Fact]
-        public async Task ShouldGetAWarehouseLocationsByIdWhenAskingForLocationsWithPackages()
-        {
-            // Arrange
-            Warehouse warehouse = ObjectMother.SetupWarehouseWithLocations(Application,
-                buildings : 1, floors : 1, corridors : 2, shelves : 2,
-                addPackages : true);
-
-            // Act
-            HttpResponseMessage response = await _client.GetAsync($"/api/warehouses/{warehouse.Id}/locations?locationStateFilter={LocationStateFilter.Assigned}");
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            string responseContent = await ((StreamContent)response.Content).ReadAsStringAsync();
-            Assert.False(string.IsNullOrEmpty(responseContent), "The response must have a body");
-            List<Location> parsedResponse = JsonConvert.DeserializeObject<List<Location>>(responseContent);
-            Assert.NotNull(parsedResponse);
-            Assert.NotEmpty(parsedResponse);
-            Assert.Equal(4, parsedResponse.Count);
-        }
-
-        [Fact]
-        public async Task ShouldGetAWarehouseLocationsByIdWhenAskingForLocationsInAnyState()
-        {
-            // Arrange
-            Warehouse warehouse = ObjectMother.SetupWarehouseWithLocations(Application,
-                buildings : 1, floors : 1, corridors : 1, shelves : 3,
-                addPackages : false);
-
-            ObjectMother.AddPackageToLocation(Application, warehouse.Locations.First());
-
-            // Act
-            HttpResponseMessage response = await _client.GetAsync($"/api/warehouses/{warehouse.Id}/locations?locationStateFilter={LocationStateFilter.Any}");
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            string responseContent = await ((StreamContent)response.Content).ReadAsStringAsync();
-            Assert.False(string.IsNullOrEmpty(responseContent), "The response must have a body");
-            List<Location> parsedResponse = JsonConvert.DeserializeObject<List<Location>>(responseContent);
-            Assert.NotNull(parsedResponse);
-            Assert.NotEmpty(parsedResponse);
-            Assert.Equal(3, parsedResponse.Count);
+            Assert.Equal(expectedLocations, parsedResponse.Count);
         }
     }
 }
