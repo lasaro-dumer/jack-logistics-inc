@@ -4,6 +4,7 @@ using JackLogisticsInc.API;
 using JackLogisticsInc.API.Data;
 using JackLogisticsInc.API.Data.Entities;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JackLogisticsInc.API.Tests.Common
@@ -67,12 +68,39 @@ namespace JackLogisticsInc.API.Tests.Common
             return warehouse;
         }
 
+        public static Location GetLocation(WebApplicationFactory<Program> application, bool free)
+        {
+            using(var scope = application.Services.CreateScope())
+            {
+                LogisticsDbContext dbContext = scope.ServiceProvider.GetService<LogisticsDbContext>();
+
+                Location location = dbContext.Locations
+                    .Include(l => l.Package)
+                    .FirstOrDefault(l => free ? l.Package == null : l.Package != null);
+
+                if (location != null)
+                    return location;
+            }
+
+            //Didn't find any location, add a warehouse with a location and using it
+            return SetupWarehouseWithLocations(application, 1, 1, 1, 1, !free).Locations.First();
+        }
+
+        public static Location GetFreeLocation(WebApplicationFactory<Program> application)
+        {
+            return GetLocation(application, free : true);
+        }
+
+        public static Location GetOccupiedLocation(WebApplicationFactory<Program> application)
+        {
+            return GetLocation(application, free : false);
+        }
+
         public static Package NewPackage()
         {
             return new Package()
             {
-                Description = $"A package with {RandomString(20)}",
-                    Destination = NewAddress()
+                Description = $"A package with {RandomString(20)}"
             };
         }
 
