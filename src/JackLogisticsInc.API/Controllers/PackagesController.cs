@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using JackLogisticsInc.API.Data;
 using JackLogisticsInc.API.Data.Entities;
 using JackLogisticsInc.API.Models;
@@ -32,6 +32,7 @@ namespace JackLogisticsInc.API.Controllers
                 .FirstOrDefault(l => l.Id == addPackageModel.LocationId);
 
             if (location == null)
+                //Not a fan of 400 when an item is not found, would prefer a 404, but most client apps/developers react better to 400
                 return BadRequest($"Location {addPackageModel.LocationId} not found");
             if (location.Package != null)
                 return BadRequest($"Location {addPackageModel.LocationId} is already occupied");
@@ -45,7 +46,7 @@ namespace JackLogisticsInc.API.Controllers
             DbContext.Packages.Add(newPackage);
             DbContext.SaveChanges();
 
-            return Created($"packages/{newPackage.Id}", newPackage);
+            return Created($"/api/packages/{newPackage.Id}", newPackage);
         }
     }
 }
