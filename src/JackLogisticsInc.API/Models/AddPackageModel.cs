@@ -1,6 +1,4 @@
-using JackLogisticsInc.API.Data.Entities;
-
-namespace JackLogisticsInc.API.Models
+﻿namespace JackLogisticsInc.API.Models
 {
     public class AddPackageModel
     {

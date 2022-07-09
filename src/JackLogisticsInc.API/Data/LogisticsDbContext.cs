@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using JackLogisticsInc.API.Data.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +14,7 @@ namespace JackLogisticsInc.API.Data
         public DbSet<Warehouse> Warehouses { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Package> Packages { get; set; }
-        public DbSet<Address> Addresses { get; set; }
+        public DbSet<Shipment> Shipments { get; set; }
 
         public LogisticsDbContext(DbContextOptions<LogisticsDbContext> options) : base(options) { }
 

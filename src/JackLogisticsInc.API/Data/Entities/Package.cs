@@ -1,4 +1,4 @@
-namespace JackLogisticsInc.API.Data.Entities
+﻿namespace JackLogisticsInc.API.Data.Entities
 {
     public class Package
     {
@@ -6,7 +6,7 @@ namespace JackLogisticsInc.API.Data.Entities
         public string Description { get; set; }
         public int LocationId { get; set; }
         public Location Location { get; set; }
-        public int DestinationId { get; set; }
-        public Address Destination { get; set; }
+        public int ShipmentId { get; set; }
+        public Shipment Shipment { get; set; }
     }
 }
