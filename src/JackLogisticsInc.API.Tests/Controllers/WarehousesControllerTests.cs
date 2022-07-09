@@ -24,12 +24,7 @@ namespace JackLogisticsInc.API.Tests.Controllers
             // Act
             HttpResponseMessage response = await _client.GetAsync("/api/warehouses");
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            string responseContent = await ((StreamContent)response.Content).ReadAsStringAsync();
-            Assert.False(string.IsNullOrEmpty(responseContent), "The response must have a body");
-            List<Warehouse> parsedResponse = JsonConvert.DeserializeObject<List<Warehouse>>(responseContent);
-            Assert.NotNull(parsedResponse);
-            Assert.NotEmpty(parsedResponse);
+            await AssertOkGetOfCollection<Warehouse>(response);
         }
 
         [Fact]
@@ -41,12 +36,8 @@ namespace JackLogisticsInc.API.Tests.Controllers
             // Act
             HttpResponseMessage response = await _client.GetAsync($"/api/warehouses/{warehouse.Id}");
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            string responseContent = await ((StreamContent)response.Content).ReadAsStringAsync();
-            Assert.False(string.IsNullOrEmpty(responseContent), "The response must have a body");
-            Warehouse parsedResponse = JsonConvert.DeserializeObject<Warehouse>(responseContent);
-            Assert.NotNull(parsedResponse);
-            Assert.False(string.IsNullOrEmpty(parsedResponse.Name));
+            Warehouse returnedObject = await AssertOkGetObject<Warehouse>(response);
+            Assert.False(string.IsNullOrEmpty(returnedObject.Name));
         }
 
         [Fact]
@@ -63,13 +54,8 @@ namespace JackLogisticsInc.API.Tests.Controllers
             // Act
             HttpResponseMessage response = await _client.GetAsync($"/api/warehouses/{warehouse.Id}/locations");
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            string responseContent = await ((StreamContent)response.Content).ReadAsStringAsync();
-            Assert.False(string.IsNullOrEmpty(responseContent), "The response must have a body");
-            List<Location> parsedResponse = JsonConvert.DeserializeObject<List<Location>>(responseContent);
-            Assert.NotNull(parsedResponse);
-            Assert.NotEmpty(parsedResponse);
-            Assert.Equal(expectedLocations, parsedResponse.Count);
+            List<Location> collection = await AssertOkGetOfCollection<Location>(response);
+            Assert.Equal(expectedLocations, collection.Count);
         }
 
         [Theory]
@@ -93,13 +79,8 @@ namespace JackLogisticsInc.API.Tests.Controllers
             // Act
             HttpResponseMessage response = await _client.GetAsync($"/api/warehouses/{warehouse.Id}/locations{queryString}");
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            string responseContent = await ((StreamContent)response.Content).ReadAsStringAsync();
-            Assert.False(string.IsNullOrEmpty(responseContent), "The response must have a body");
-            List<Location> parsedResponse = JsonConvert.DeserializeObject<List<Location>>(responseContent);
-            Assert.NotNull(parsedResponse);
-            Assert.NotEmpty(parsedResponse);
-            Assert.Equal(expectedLocations, parsedResponse.Count);
+            List<Location> collection = await AssertOkGetOfCollection<Location>(response);
+            Assert.Equal(expectedLocations, collection.Count);
         }
     }
 }

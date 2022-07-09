@@ -22,12 +22,7 @@ namespace JackLogisticsInc.API.Tests.Controllers
             // Act
             HttpResponseMessage response = await _client.GetAsync("/api/packages");
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            string responseContent = await ((StreamContent)response.Content).ReadAsStringAsync();
-            Assert.False(string.IsNullOrEmpty(responseContent), "The response must have a body");
-            List<Package> parsedResponse = JsonConvert.DeserializeObject<List<Package>>(responseContent);
-            Assert.NotNull(parsedResponse);
-            Assert.NotEmpty(parsedResponse);
+            await AssertOkGetOfCollection<Package>(response);
         }
 
         [Fact]
@@ -49,10 +44,7 @@ namespace JackLogisticsInc.API.Tests.Controllers
             HttpResponseMessage response = await _client.PostAsync("/api/packages", httpContent);
 
             // Assert
-            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-            Assert.NotNull(response.Headers.Location);
-            string responseContent = await ((StreamContent)response.Content).ReadAsStringAsync();
-            Assert.False(string.IsNullOrEmpty(responseContent), "The response must have a body");
+            await AssertCreated(response);
         }
 
         [Fact]
@@ -74,10 +66,7 @@ namespace JackLogisticsInc.API.Tests.Controllers
             HttpResponseMessage response = await _client.PostAsync("/api/packages", httpContent);
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Null(response.Headers.Location);
-            string responseContent = await ((StreamContent)response.Content).ReadAsStringAsync();
-            Assert.False(string.IsNullOrEmpty(responseContent), "The response must have a body with further details");
+            await AssertBadRequest(response);
         }
 
         [Fact]
@@ -99,10 +88,7 @@ namespace JackLogisticsInc.API.Tests.Controllers
             HttpResponseMessage response = await _client.PostAsync("/api/packages", httpContent);
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Null(response.Headers.Location);
-            string responseContent = await ((StreamContent)response.Content).ReadAsStringAsync();
-            Assert.False(string.IsNullOrEmpty(responseContent), "The response must have a body with further details");
+            await AssertBadRequest(response);
         }
     }
 }
