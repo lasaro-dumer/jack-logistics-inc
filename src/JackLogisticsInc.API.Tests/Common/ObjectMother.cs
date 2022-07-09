@@ -38,7 +38,8 @@ namespace JackLogisticsInc.API.Tests.Common
         {
             Warehouse warehouse = new Warehouse()
             {
-            Name = $"Deposit {RandomString(10)}"
+            Name = $"Deposit {RandomString(10)}",
+            AddressData = NewAddressData()
             };
 
             ScopedAddWarehouse(scope, buildings, floors, corridors, shelves, addPackages, warehouse);

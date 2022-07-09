@@ -34,7 +34,7 @@ namespace JackLogisticsInc.API.Data
             foreach (IMutableForeignKey fk in cascadeFKs)
                 fk.DeleteBehavior = DeleteBehavior.Restrict;
 
-            modelBuilder.Entity<Warehouse>().HasData(new Warehouse() { Id = 1, Name = "Main Street Deposit" });
+            modelBuilder.Entity<Warehouse>().HasData(new Warehouse() { Id = 1, Name = "Main Street Deposit", AddressData = "F38M+QM Glória, Estrela - RS" });
 
             modelBuilder.Entity<Location>().HasData(new Location() { Id = 1, WarehouseId = 1, Building = "1A", Floor = "1", Corridor = "A", Shelf = "001" });
             modelBuilder.Entity<Location>().HasData(new Location() { Id = 2, WarehouseId = 1, Building = "1A", Floor = "1", Corridor = "A", Shelf = "002" });

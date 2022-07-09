@@ -6,6 +6,7 @@ namespace JackLogisticsInc.API.Data.Entities
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string AddressData { get; set; }
         public List<Location> Locations { get; set; }
 
         public Warehouse()
