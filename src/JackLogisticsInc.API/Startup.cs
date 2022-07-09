@@ -32,15 +32,8 @@ namespace JackLogisticsInc.API
         {
             services.AddDbContext<LogisticsDbContext>(options =>
             {
-                if (HostEnvironment.IsDevelopment())
-                {
-                    options.UseInMemoryDatabase("InMemoryDbForTesting");
-                }
-                else
-                {
-                    options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"),
-                        opt => opt.MigrationsHistoryTable(LogisticsDbContext.MIGRATIONS_TABLE, LogisticsDbContext.SCHEMA));
-                }
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"),
+                    opt => opt.MigrationsHistoryTable(LogisticsDbContext.MIGRATIONS_TABLE, LogisticsDbContext.SCHEMA));
             });
 
             services.AddControllers()
