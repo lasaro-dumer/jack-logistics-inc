@@ -11,8 +11,9 @@ function App() {
           paddingBottom: "1rem",
         }}
       >
-        <Link to="/packages/new">Add Package</Link> |{" "}
-        <Link to="/packages">Packages</Link>
+        <Link to="/packages/new">Add Package</Link> | {" "}
+        <Link to="/packages">Packages</Link> | {" "}
+        <Link to="/shipments">Shipments</Link>
       </nav>
       <Outlet />
     </div>

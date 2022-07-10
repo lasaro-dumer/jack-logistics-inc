@@ -11,6 +11,7 @@ import reportWebVitals from './reportWebVitals';
 import AddPackage from './routes/add-package';
 import ListPackages from './routes/list-packages';
 import PackageDetailWrapper from './routes/package-detail';
+import ShipPackageWrapper from './routes/ship-package';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -21,8 +22,12 @@ root.render(
           <Route path="packages">
             <Route index element={<ListPackages />} />
             <Route path="new" element={<AddPackage />} />
+            <Route path="ship/:id" element={<ShipPackageWrapper />} />
             <Route path=":id" element={<PackageDetailWrapper />} />
           </Route>
+          {/* <Route path="shipments">
+            <Route index element={<ListShipments />} />
+          </Route> */}
         </Route>
       </Routes>
     </BrowserRouter>

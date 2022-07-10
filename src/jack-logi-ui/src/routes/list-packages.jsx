@@ -8,6 +8,21 @@ function QueryNavLink({ to, ...props }) {
   return <NavLink to={to + location.search} {...props} />;
 }
 
+function ShipPackageNavLink({ to, ...props }) {
+  let location = useLocation();
+  return <NavLink to={to + location.search} {...props} />;
+}
+
+function locationName(packageItem) {
+  if (packageItem.location)
+    return `${packageItem?.location.building}-${packageItem?.location.floor}-${packageItem?.location.corridor}-${packageItem?.location.shelf}`;
+  return "";
+}
+
+function showShipLink(packageItem) {
+  return packageItem.shipment ? "none" : "block";
+}
+
 class ListPackages extends React.Component {
   constructor(props) {
     super(props);
@@ -65,8 +80,20 @@ class ListPackages extends React.Component {
                   </td> */}
                   <td>{packageItem.description}</td>
                   {/* <td>{packageItem.state}</td> */}
-                  <td>{`${packageItem?.location.building}-${packageItem?.location.floor}-${packageItem?.location.corridor}-${packageItem?.location.shelf}`}</td>
+                  <td>{locationName(packageItem)}</td>
                   <td>{packageItem?.shipment?.id}</td>
+                  <td>
+                    <ShipPackageNavLink
+                      key={packageItem.id}
+                      style={{
+                        display: showShipLink(packageItem),
+                        margin: "1rem 0",
+                      }}
+                      to={`/packages/ship/${packageItem.id}`}
+                    >
+                      Ship Package
+                    </ShipPackageNavLink>
+                  </td>
                 </tr>
               ))}
           </table>

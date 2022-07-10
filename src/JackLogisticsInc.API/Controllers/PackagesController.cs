@@ -27,6 +27,20 @@ namespace JackLogisticsInc.API.Controllers
                 .ToList());
         }
 
+        [HttpGet("{id}")]
+        public IActionResult GetPackageById(int id)
+        {
+            var package = DbContext.Packages
+                .Include(p => p.Location)
+                .Include(p => p.Shipment)
+                .FirstOrDefault(p => p.Id == id);
+
+            if (package == null)
+                return BadRequest("Invalid package ID");
+
+            return Ok(package);
+        }
+
         [HttpPost]
         public IActionResult AddPackage(AddPackageModel addPackageModel)
         {
