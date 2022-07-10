@@ -9,23 +9,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace JackLogisticsInc.API.Services
 {
     public class DeliveryProcessingService : BackgroundService
     {
-        private readonly ILogger<DeliveryProcessingService> _logger;
         public IServiceProvider Services { get; set; }
 
-        public DeliveryProcessingService(IServiceProvider services, ILogger<DeliveryProcessingService> logger)
+        public DeliveryProcessingService(IServiceProvider services)
         {
-            _logger = logger;
             Services = services;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation($"Starting {nameof(DeliveryProcessingService)} {nameof(ExecuteAsync)}");
+            Log.Information($"Starting {nameof(DeliveryProcessingService)} {nameof(ExecuteAsync)}");
 
             await Task.Yield();
 
@@ -38,7 +37,7 @@ namespace JackLogisticsInc.API.Services
 
         private async Task DoWork(CancellationToken stoppingToken)
         {
-            _logger.LogInformation($"Starting {nameof(DeliveryProcessingService)} {nameof(DoWork)}");
+            Log.Information($"Starting {nameof(DeliveryProcessingService)} {nameof(DoWork)}");
             try
             {
                 using(var scope = Services.CreateScope())
@@ -48,23 +47,23 @@ namespace JackLogisticsInc.API.Services
                     List<Shipment> dueShipments = await dbContext.Shipments.Where(s => !s.DeliveredAt.HasValue &&
                         s.EstimatedTimeOfArrival <= DateTime.UtcNow).ToListAsync(stoppingToken);
 
-                    _logger.LogInformation($"Delivering {dueShipments.Count} shipments");
+                    Log.Information($"Delivering {dueShipments.Count} shipments");
 
                     foreach (var shipment in dueShipments)
                     {
                         shipment.DeliveredAt = DateTime.UtcNow;
                     }
 
-                    _logger.LogInformation($"Saving shipments");
+                    Log.Information($"Saving shipments");
 
                     await dbContext.SaveChangesAsync(stoppingToken);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error while processing shipments delivery: {ex.Message}", ex);
+                Log.Error($"Error while processing shipments delivery: {ex.Message}", ex);
             }
-            _logger.LogInformation($"Finishing {nameof(DeliveryProcessingService)} {nameof(DoWork)}");
+            Log.Information($"Finishing {nameof(DeliveryProcessingService)} {nameof(DoWork)}");
         }
     }
 }

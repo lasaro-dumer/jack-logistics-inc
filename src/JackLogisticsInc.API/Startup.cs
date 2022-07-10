@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 namespace JackLogisticsInc.API
 {
@@ -78,6 +79,7 @@ namespace JackLogisticsInc.API
                 c.RoutePrefix = "api/swagger";
             });
 
+            app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
 
             app.UseRouting();
