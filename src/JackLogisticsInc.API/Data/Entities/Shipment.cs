@@ -9,6 +9,7 @@ namespace JackLogisticsInc.API.Data.Entities
         public List<Package> Packages { get; set; }
         public string DestinationAddress { get; set; }
         public DateTime LeftForDestinationAt { get; set; }
+        public DateTime EstimatedTimeOfArrival { get; set; }
         public DateTime? DeliveredAt { get; set; }
 
         public Shipment()

@@ -170,6 +170,7 @@ namespace JackLogisticsInc.API.Tests.Common
                     {
                         DestinationAddress = NewAddressData(),
                         LeftForDestinationAt = DateTime.UtcNow,
+                        EstimatedTimeOfArrival = DateTime.UtcNow.AddMinutes(2)
                     };
                     shipment.Packages.Add(package);
 

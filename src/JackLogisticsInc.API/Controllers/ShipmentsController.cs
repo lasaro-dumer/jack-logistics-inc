@@ -45,10 +45,14 @@ namespace src.JackLogisticsInc.API.Controllers
             if (inTransitShipments > 0)
                 return BadRequest($"No truck available for shipment");
 
+            //TODO: Implement a real ETA calculation (using GoogleMaps?)
+            DateTime eta = DateTime.UtcNow.AddMinutes(3);
+
             Shipment shipment = new Shipment()
             {
                 DestinationAddress = shipPackageModel.DestinationAddressData,
                 LeftForDestinationAt = DateTime.UtcNow,
+                EstimatedTimeOfArrival = eta
             };
             shipment.Packages.Add(package);
 

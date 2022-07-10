@@ -3,15 +3,17 @@ using System;
 using JackLogisticsInc.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace JackLogisticsInc.API.Migrations
 {
     [DbContext(typeof(LogisticsDbContext))]
-    partial class LogisticsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220710143316_ShipmentEtaColumn")]
+    partial class ShipmentEtaColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
