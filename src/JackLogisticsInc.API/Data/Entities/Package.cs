@@ -6,7 +6,7 @@
         public string Description { get; set; }
         public int? LocationId { get; set; }
         public Location Location { get; set; }
-        public int ShipmentId { get; set; }
+        public int? ShipmentId { get; set; }
         public Shipment Shipment { get; set; }
     }
 }
