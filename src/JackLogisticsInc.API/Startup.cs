@@ -18,6 +18,8 @@ namespace JackLogisticsInc.API
 {
     public class Startup
     {
+        readonly string AllowAll = "_allowAll";
+
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
@@ -40,6 +42,16 @@ namespace JackLogisticsInc.API
                 .AddNewtonsoftJson(options =>
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                 .AddApplicationPart(typeof(Startup).Assembly);
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: AllowAll,
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin();
+                        policy.AllowAnyHeader();
+                    });
+            });
 
             services.AddSwaggerGen(c =>
             {
@@ -69,6 +81,8 @@ namespace JackLogisticsInc.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(AllowAll);
 
             app.UseAuthorization();
 
