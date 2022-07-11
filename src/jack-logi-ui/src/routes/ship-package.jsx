@@ -37,7 +37,7 @@ class ShipPackage extends React.Component {
       packageId: this.state?.packageItem.id || 0,
       destinationAddressData: this.state?.destinationAddress || "",
     };
-    console.log("You clicked submit.", shipPackage);
+
     fetch("https://localhost:5001/api/shipments", {
       method: "POST",
       headers: {
