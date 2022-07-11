@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
 class ShipPackage extends React.Component {
   constructor(props) {
@@ -45,28 +45,32 @@ class ShipPackage extends React.Component {
       },
       body: JSON.stringify(shipPackage),
     })
-      .then((response) => {
-        if (response.status != 201) return response.text();
-        return response.json();
+      .then(async (response) => {
+        const success = response.status === 201;
+        this.setState({ addResult: success });
+        if (success) return response.json();
+        return response.text();
       })
       .then((data) => {
-        console.log("Success:", data);
+        if (this.state.addResult) {
+          this.setState({ errorMessage: null });
+        } else {
+          this.setState({ errorMessage: data });
+        }
       })
       .catch((error) => {
-        console.error("Error:", error);
+        this.setState({ addResult: false });
         this.setState({ errorMessage: error });
       });
   }
 
   handleDestinationAddressChange(e) {
-    console.log("handleDestinationAddressChange:", e.target.value);
     this.setState({ destinationAddress: e.target.value });
   }
 
   render() {
     const { id } = this.props.match.params;
     if (this.state.packageItem) {
-      const displayErrorMessage = this.state.errorMessage ? "block" : "none";
       return (
         <div style={{ padding: "1rem" }}>
           <form onSubmit={this.handleSubmit}>
@@ -84,7 +88,8 @@ class ShipPackage extends React.Component {
             <br />
             <button type="submit">Ship Package</button>
           </form>
-          <div style={{ display: displayErrorMessage }}></div>
+          {!this.state.addResult && <p>{this.state.errorMessage}</p>}
+          {this.state.addResult && <Navigate to="/packages" replace={true} />}
         </div>
       );
     }

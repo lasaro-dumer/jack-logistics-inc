@@ -1,5 +1,6 @@
 import React from "react";
 import Dropdown from "react-dropdown";
+import { Navigate } from "react-router-dom";
 
 class AddPackage extends React.Component {
   constructor(props) {
@@ -59,12 +60,22 @@ class AddPackage extends React.Component {
       },
       body: JSON.stringify(newPackage),
     })
-      .then((response) => response.json())
+      .then(async (response) => {
+        const success = response.status === 201;
+        this.setState({ addResult: success });
+        if (success) return response.json();
+        return response.text();
+      })
       .then((data) => {
-        console.log("Success:", data);
+        if (this.state.addResult) {
+          this.setState({ errorMessage: null });
+        } else {
+          this.setState({ errorMessage: data });
+        }
       })
       .catch((error) => {
-        console.error("Error:", error);
+        this.setState({ addResult: false });
+        this.setState({ errorMessage: error });
       });
   }
 
@@ -101,6 +112,8 @@ class AddPackage extends React.Component {
           </label>
           <button type="submit">Add Package</button>
         </form>
+        {!this.state.addResult && <p>{this.state.errorMessage}</p>}
+        {this.state.addResult && <Navigate to="/packages" replace={true} />}
       </div>
     );
   }
