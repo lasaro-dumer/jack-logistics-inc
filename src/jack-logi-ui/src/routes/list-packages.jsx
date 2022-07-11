@@ -20,6 +20,8 @@ class ListPackages extends React.Component {
     super(props);
     this.state = { packages: [], searchParams: null };
     this.updateFilter = this.updateFilter.bind(this);
+    this.updatePendingShipmentFilter =
+      this.updatePendingShipmentFilter.bind(this);
   }
 
   componentDidMount() {
@@ -35,14 +37,30 @@ class ListPackages extends React.Component {
     }
   }
 
+  updatePendingShipmentFilter(event) {
+    this.setState({ pendingShipmentFilter: event.target.checked });
+  }
+
   render() {
     return (
       <div>
         <div style={{ borderRight: "solid 1px", padding: "1rem" }}>
-          <input
-            value={this.state.searchParams || ""}
-            onChange={this.updateFilter}
-          />
+          <label style={{ padding: "1rem" }}>
+            Package Description contains
+            <input
+              value={this.state.searchParams || ""}
+              onChange={this.updateFilter}
+              style={{ marginLeft: "1rem" }}
+            />
+          </label>
+          <label style={{ padding: "1rem" }}>
+            Only Pending Shipment
+            <input
+              type={"checkbox"}
+              checked={this.state.pendingShipmentFilter || false}
+              onChange={this.updatePendingShipmentFilter}
+            ></input>
+          </label>
           <table>
             <tr>
               <th>Id</th>
@@ -53,17 +71,21 @@ class ListPackages extends React.Component {
             </tr>
             {this.state.packages
               .filter((packageItem) => {
+                if (this.state.pendingShipmentFilter)
+                  return (
+                    !packageItem.shipmentId || packageItem.shipmentId === 0
+                  );
+
                 let filter = this.state.searchParams;
                 if (!filter) return true;
                 let description = packageItem.description.toLowerCase();
                 return description.includes(filter.toLowerCase());
               })
               .map((packageItem) => (
-                <tr>
+                <tr key={packageItem.id}>
                   <td>{packageItem.id}</td>
                   <td>
                     <QueryNavLink
-                      key={packageItem.id}
                       style={{ display: "block", margin: "1rem 0" }}
                       to={`/packages/${packageItem.id}`}
                     >
@@ -73,10 +95,7 @@ class ListPackages extends React.Component {
                   <td>{locationName(packageItem)}</td>
                   <td>{packageItem?.shipment?.id}</td>
                   <td>
-                    <ShipPackageNavLink
-                      key={packageItem.id}
-                      packageItem={packageItem}
-                    >
+                    <ShipPackageNavLink packageItem={packageItem}>
                       Ship Package
                     </ShipPackageNavLink>
                   </td>

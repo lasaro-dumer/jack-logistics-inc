@@ -12,8 +12,7 @@ function App() {
         }}
       >
         <Link to="/packages/new">Add Package</Link> | {" "}
-        <Link to="/packages">Packages</Link> | {" "}
-        <Link to="/shipments">Shipments</Link>
+        <Link to="/packages">Packages</Link>
       </nav>
       <Outlet />
     </div>

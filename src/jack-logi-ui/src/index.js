@@ -25,9 +25,6 @@ root.render(
             <Route path="ship/:id" element={<ShipPackageWrapper />} />
             <Route path=":id" element={<PackageDetailWrapper />} />
           </Route>
-          {/* <Route path="shipments">
-            <Route index element={<ListShipments />} />
-          </Route> */}
         </Route>
       </Routes>
     </BrowserRouter>
