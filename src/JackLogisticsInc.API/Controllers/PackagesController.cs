@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using JackLogisticsInc.API.Data;
 using JackLogisticsInc.API.Data.Entities;
+using JackLogisticsInc.API.Data.Repositories;
 using JackLogisticsInc.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,29 +13,25 @@ namespace JackLogisticsInc.API.Controllers
     [Route("api/[controller]")]
     public class PackagesController : ControllerBase
     {
-        public LogisticsDbContext DbContext { get; set; }
+        public PackagesRepository PackagesRepository { get; }
+        public WarehouseRepository WarehouseRepository { get; }
 
-        public PackagesController(LogisticsDbContext dbContext)
+        public PackagesController(PackagesRepository packagesRepository, WarehouseRepository warehouseRepository)
         {
-            DbContext = dbContext;
+            PackagesRepository = packagesRepository;
+            WarehouseRepository = warehouseRepository;
         }
 
         [HttpGet]
         public IActionResult GetPackages()
         {
-            return Ok(DbContext.Packages
-                .Include(p => p.Location)
-                .Include(p => p.Shipment)
-                .ToList());
+            return base.Ok(PackagesRepository.GetPackagesList());
         }
 
         [HttpGet("{id}")]
         public IActionResult GetPackageById(int id)
         {
-            var package = DbContext.Packages
-                .Include(p => p.Location)
-                .Include(p => p.Shipment)
-                .FirstOrDefault(p => p.Id == id);
+            Package package = PackagesRepository.GetPackageById(id);
 
             if (package == null)
                 return BadRequest("Invalid package ID");
@@ -44,9 +42,7 @@ namespace JackLogisticsInc.API.Controllers
         [HttpPost]
         public IActionResult AddPackage(AddPackageModel addPackageModel)
         {
-            Location location = DbContext.Locations
-                .Include(l => l.Package)
-                .FirstOrDefault(l => l.Id == addPackageModel.LocationId);
+            Location location = WarehouseRepository.GetLocationById(addPackageModel.LocationId);
 
             if (location == null)
                 //Not a fan of 400 when an item is not found, would prefer a 404, but most client apps/developers react better to 400
@@ -54,14 +50,7 @@ namespace JackLogisticsInc.API.Controllers
             if (location.Package != null)
                 return BadRequest($"Location {addPackageModel.LocationId} is already occupied");
 
-            Package newPackage = new Package()
-            {
-                Description = addPackageModel.Description,
-                Location = location
-            };
-
-            DbContext.Packages.Add(newPackage);
-            DbContext.SaveChanges();
+            Package newPackage = PackagesRepository.AddPackage(addPackageModel.Description, location);
 
             return Created($"/api/packages/{newPackage.Id}", newPackage);
         }

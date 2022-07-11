@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using JackLogisticsInc.API.Data;
+using JackLogisticsInc.API.Data.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -38,6 +39,10 @@ namespace JackLogisticsInc.API
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"),
                     opt => opt.MigrationsHistoryTable(LogisticsDbContext.MIGRATIONS_TABLE, LogisticsDbContext.SCHEMA));
             });
+
+            services.AddScoped<PackagesRepository>();
+            services.AddScoped<ShipmentsRepository>();
+            services.AddScoped<WarehouseRepository>();
 
             services.AddControllers()
                 .AddNewtonsoftJson(options =>
