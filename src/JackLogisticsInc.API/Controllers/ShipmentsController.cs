@@ -22,7 +22,7 @@ namespace src.JackLogisticsInc.API.Controllers
         [HttpGet]
         public IActionResult GetShipments()
         {
-            return Ok(DbContext.Shipments.ToList());
+            return Ok(DbContext.Shipments.Include(s => s.Packages).ToList());
         }
 
         [HttpPost]

@@ -38,6 +38,7 @@ namespace JackLogisticsInc.API.Services
         private async Task DoWork(CancellationToken stoppingToken)
         {
             Log.Information($"Starting {nameof(DeliveryProcessingService)} {nameof(DoWork)}");
+
             try
             {
                 using(var scope = Services.CreateScope())
@@ -52,6 +53,7 @@ namespace JackLogisticsInc.API.Services
                     foreach (var shipment in dueShipments)
                     {
                         shipment.DeliveredAt = DateTime.UtcNow;
+                        Log.Information($"Delivered shipment {shipment.Id}");
                     }
 
                     Log.Information($"Saving shipments");
@@ -63,6 +65,7 @@ namespace JackLogisticsInc.API.Services
             {
                 Log.Error($"Error while processing shipments delivery: {ex.Message}", ex);
             }
+
             Log.Information($"Finishing {nameof(DeliveryProcessingService)} {nameof(DoWork)}");
         }
     }
