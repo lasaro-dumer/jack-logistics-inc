@@ -16,7 +16,7 @@ The testing uses an in memory database, so no real database is needed and it can
 
 ### Configuring the local environment
 
-Add the following configuration (changing the pertinent details) to the file `src\JackLogisticsInc.API\appsettings.Development.json` (or open the project user secrets, on (VSCode)[https://marketplace.visualstudio.com/items?itemName=adrianwilczynski.user-secrets] or (Visual Studio)[https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?tabs=windows#set-a-secret]):
+Add the following configuration (changing the pertinent details) to the file `src\JackLogisticsInc.API\appsettings.Development.json` (or open the project user secrets, on [VSCode](https://marketplace.visualstudio.com/items?itemName=adrianwilczynski.user-secrets) or [Visual Studio](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?tabs=windows#set-a-secret)):
 
 ```
     "ConnectionStrings": {
